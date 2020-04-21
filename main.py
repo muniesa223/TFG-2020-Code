@@ -1,15 +1,12 @@
-#DIEGO
 import logging
 import sys
 from datetime import datetime, timedelta
 import getInfoSongs
-#
 
 from sanic import Sanic
 from sanic.response import json, html, text
 import os
 
-#DIEGO
 LOG_FILE = datetime.now().strftime("%Y%m%d") + "logfile.log"
 
 def setLogging():
@@ -45,7 +42,6 @@ def main(arg1,arg2):
         logger.info(miss)
 
     return relationsDF
-#
 
 app = Sanic()
 
@@ -58,15 +54,15 @@ async def test(request):
 	template = open(os.getcwd() + "/templates/index.html")
 	return html(template.read())
 
-# Esto no es necesario, solo es una prueba más
+# Esta es la ruta en la que se muestra nuestro estudio
 @app.route("/run")
 async def test(request):
 	song1='Q158553' #satisfaction rolling stones
 	song2='Q607742' #hey the beatles
 	relationsDF = main(song1,song2)
 
-	return text(relationsDF) #{"name": "Bayside"}
+	return text(relationsDF)
 
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=8000)
+	app.run(host="0.0.0.0", port=8000, debug=True) # Debug sirve para que el servidor se actualice al cambiar código
