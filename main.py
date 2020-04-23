@@ -50,19 +50,19 @@ app.static('/static', './static')
 
 @app.route("/")
 async def test(request):
-	# os.getcwd() devuelve la URL actual
-	template = open(os.getcwd() + "/templates/index.html")
-	return html(template.read())
+    # os.getcwd() devuelve la URL actual
+    template = open(os.getcwd() + "/templates/index.html")
+    return html(template.read())
 
 # Esta es la ruta en la que se muestra nuestro estudio
 @app.route("/run")
 async def test(request):
-	song1='Q158553' #satisfaction rolling stones
-	song2='Q607742' #hey the beatles
-	relationsDF = main(song1,song2)
+    song1='Q158553' #satisfaction rolling stones
+    song2='Q607742' #hey the beatles
+    relationsDF = main(song1,song2) # relationsDF es un DataFrame
 
-	return text(relationsDF)
+    return text(relationsDF)
 
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=8000, debug=True) # Debug sirve para que el servidor se actualice al cambiar código
+    app.run(host="0.0.0.0", port=8000, debug=True) # Debug sirve para que el servidor se actualice al cambiar código
