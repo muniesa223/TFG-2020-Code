@@ -13,7 +13,6 @@ isodate==0.6.0
 multidict==4.7.5
 numpy==1.18.3
 pandas==1.0.3
-paqueteCalculos==1.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
 pytz==2019.3
