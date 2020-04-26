@@ -65,4 +65,8 @@ async def test(request):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True) # Debug sirve para que el servidor se actualice al cambiar código
+    app.run(
+        host="0.0.0.0",
+        port=os.environ.get('PORT') or 8000,
+        debug=True
+    ) 
