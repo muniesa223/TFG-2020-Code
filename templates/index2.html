@@ -51,12 +51,26 @@
       <div class="col-lg-12 text-center">
         <h1 class="mt-5">A Bootstrap 4 Starter Template</h1>
         <p class="lead">Complete with pre-defined file paths and responsive navigation!</p>
-        <ul class="list-unstyled">
-          <li>Bootstrap 4.3.1</li>
-          <li>jQuery 3.4.1</li>
-          <li>{{aux}}</li>
-          <li>{{data}}</li>
-        </ul>
+        <br>
+        <br>
+        <form action="/result" target="_blank" method="get">
+          <label for="xsong">First song:</label><br>
+          <!-- <input type="text" id="xsong" name="xsong" value="Q158553"><br> -->
+          <input list="songs" name="xsong">
+          <datalist id="songs">
+            <option value="Q158553">
+            <option value="Q607742">
+            <option value="Q153029">
+            <option value="Q153064">
+          </datalist><br>
+
+          <label for="ysong">Second song:</label><br>
+          <!-- <input type="text" id="ysong" name="ysong" value="Q607742"><br><br> -->
+          <input list="songs" name="ysong"><br><br>
+
+
+          <input type="submit" value="Submit">
+        </form>
       </div>
     </div>
   </div>

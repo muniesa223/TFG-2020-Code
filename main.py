@@ -58,44 +58,43 @@ def main(arg1,arg2):
 
     return relationsDF
 
+
+
+# ----------------------------    SECCIÓN DE LA APP Y SUS RUTAS ----------------------------
+
+
+
 app = Sanic()
 
 # Serves files from the static folder to the URL /static
 app.static('/static', './static')
 
+# Esta es la página principal de la aplicación
 @app.route("/")
 async def test(request):
     # os.getcwd() devuelve la URL actual
-    template = open(os.getcwd() + "/templates/index.html")
-    return html(template.read())
+    # template = open(os.getcwd() + "/templates/index.html")
+    # return html(template.read())
 
-# Esta es la ruta en la que se muestra nuestro estudio sin html
-@app.route("/run")
-async def test(request):
-    song1='Q158553' #satisfaction rolling stones
-    song2='Q607742' #hey the beatles
-    relationsDF = main(song1,song2) # relationsDF es un DataFrame
-
-    return text(relationsDF)
-
-
-# Esta ruta muestra un html diferente que muestra las variables
-# que le indiquemos.
-# Esta será la forma preferible de mostrar las páginas
-@app.route('/show')
-async def test(request):
-    song1='Q158553' #satisfaction rolling stones
-    song2='Q607742' #hey the beatles
-    relationsDF = main(song1,song2) # relationsDF es un DataFrame
-
-    aux = 'PROBANDO, PROBANDO'
-    data = relationsDF
-
+    # Si el html necesita valores, habría que añadirlos dentro de este template
+    # separados por comas. Ej: template('index2.html', var1=var1, var2=var2)
     return template(
-        'index2.html',
-        aux=aux,
-        data=data
+        'index2.html'
     )
+
+# Esta es la ruta en la que se muestra nuestro estudio
+# Por ahora muestra el dataframe dentro de una tabla,
+# se sustituirá por un grafo en una actualización futura
+@app.route("/result")
+async def test(request):
+    thislist = request.query_args # Esta es la lista de argumentos recibidos en la URL
+
+    song1= thislist[0][1]
+    song2= thislist[1][1]
+    relationsDF = main(song1,song2) # relationsDF es un DataFrame
+
+    return html(relationsDF.to_html())
+
 
 if __name__ == '__main__':
     app.run(
