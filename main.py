@@ -95,6 +95,20 @@ async def test(request):
 
     return html(relationsDF.to_html())
 
+@app.route("/graph")
+async def test(request):
+
+    return template(
+        'graph.html'
+    )
+
+@app.route("/graph2")
+async def test(request):
+
+    return template(
+        'graph2.html'
+    )
+
 
 if __name__ == '__main__':
     app.run(
