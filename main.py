@@ -1,26 +1,8 @@
 import logging
 import sys
 from datetime import datetime, timedelta
-import getInfoSongs
-
-from sanic import Sanic
-from sanic.response import json, html, text
-from jinja2 import Environment, PackageLoader, select_autoescape
-import os
-
-
-# define the environment for the Jinja2 templates
-env = Environment(
-    loader=PackageLoader('main', 'templates'),
-    autoescape=select_autoescape(['html', 'xml', 'tpl'])
-)
-
-
-# a function for loading an HTML template from the Jinja environment
-def template(tpl, **kwargs):
-    template = env.get_template(tpl)
-    return html(template.render(kwargs))
-
+from getInfoSongs import *
+from sparqlLibrary import *
 
 LOG_FILE = datetime.now().strftime("%Y%m%d") + "logfile.log"
 
@@ -39,81 +21,73 @@ def setLogging():
 
     return logger
 
-def main(arg1,arg2):
+def main(arg1,arg2,arg3,arg4):
+
+    #STUDY 1
     song1 = arg1
-    song2 = arg2
+    artist1 = arg2
+
+    #STUDY 2
+    song2 = arg3
+    artist2 = arg4
 
     logger = setLogging()
-             
+
+    #PARSE SONGS
     try:
-        if song1=='0':
-            raise Exception('Missing first song')
-        else:
-            if song2=='0':
-                raise Exception('Missing second song')
-            else:
-                relationsDF = getInfoSongs.main(song1,song2,logger)
+        #Object 1
+        song1 = isSingle(song1,artist1)
+        if song1.empty == True:
+            song1 = arg1
+            song1 = isSong(song1,artist1)
+    
+        #Object 2
+        song2 = isSingle(song2,artist2)
+        if song2.empty == True:
+            song2 = arg3
+            song2 = isSong(song2,artist2)
+
     except Exception as miss:
         logger.info(miss)
+       
+    #GET PROPERTIES         
+    try:
+        if song1.empty == True:
+            raise Exception('Missing first song')
+        else:
+            if song2.empty == True:
+                raise Exception('Missing second song')
+            else:
+                #SONG1
+                songData = getInfSong(song1['item.value'][0])
+                genreData = getGenre2(songData,logger)
+                artistData = getArtist2(songData,logger)
+                membersData = getMembers2(artistData,logger)
 
+                #SONG2
+                songData2 = getInfSong(song2['item.value'][0])
+                genreData2 = getGenre2(songData2,logger)
+                artistData2 = getArtist2(songData2,logger)
+                membersData2 = getMembers2(artistData2,logger)
+ 
+
+                song1Data = [songData,genreData,artistData,membersData]
+                song1Data = pd.concat(song1Data,sort=False)
+
+                song2Data = [songData2,genreData2,artistData2,membersData2]
+                song2Data = pd.concat(song2Data,sort=False)
+
+
+                relationsDF = mergeData(song1Data,song2Data)
+                relationsDF = relationsDF.drop_duplicates()
+
+    except Exception as miss:
+        logger.info(miss)
     return relationsDF
 
-
-
-# ----------------------------    SECCIÓN DE LA APP Y SUS RUTAS ----------------------------
-
-
-
-app = Sanic()
-
-# Serves files from the static folder to the URL /static
-app.static('/static', './static')
-
-# Esta es la página principal de la aplicación
-@app.route("/")
-async def test(request):
-    # os.getcwd() devuelve la URL actual
-    # template = open(os.getcwd() + "/templates/index.html")
-    # return html(template.read())
-
-    # Si el html necesita valores, habría que añadirlos dentro de este template
-    # separados por comas. Ej: template('index2.html', var1=var1, var2=var2)
-    return template(
-        'index2.html'
-    )
-
-# Esta es la ruta en la que se muestra nuestro estudio
-# Por ahora muestra el dataframe dentro de una tabla,
-# se sustituirá por un grafo en una actualización futura
-@app.route("/result")
-async def test(request):
-    thislist = request.query_args # Esta es la lista de argumentos recibidos en la URL
-
-    song1= thislist[0][1]
-    song2= thislist[1][1]
-    relationsDF = main(song1,song2) # relationsDF es un DataFrame
-
-    return html(relationsDF.to_html())
-
-@app.route("/graph")
-async def test(request):
-
-    return template(
-        'graph.html'
-    )
-
-@app.route("/graph2")
-async def test(request):
-
-    return template(
-        'graph2.html'
-    )
-
-
-if __name__ == '__main__':
-    app.run(
-        host='0.0.0.0',
-        port=int(os.environ.get('PORT', 8000)),
-        workers=int(os.environ.get('WEB_CONCURRENCY', 1)),
-        debug=bool(os.environ.get('DEBUG', ''))
-    )
+if __name__ == "__main__":
+    song1 = 'Start Me Up'
+    artist1 = 'The Rolling Stones'
+    song2 = 'Let It Be' 
+    artist2 = 'The Beatles'
+    relationsDF = main(song1,artist1,song2,artist2)
