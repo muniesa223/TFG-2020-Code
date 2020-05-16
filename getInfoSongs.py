@@ -23,13 +23,13 @@ def parse1Song(name,artist):
 
 ##ADD TO DFRESULT GENRES PROPERTIES
 def getGenre2(df,logger):
-    genre = getGenrefrom(df)
+    genre= getGenrefrom(df)
     aux = pd.DataFrame()
     if genre.empty == False:
        logger.info("Se ha encontrado genero")
        
-       for i in genre:   
-           resultsGenre1 = getInfoGenre(i)
+       for i in genre.iterrows():   
+           resultsGenre1 = getInfoGenre(i[1]['idValueProperty'],i[1]['valueProperty'])
            resultsGenre1['Level'] = 3
            resultsGenre1 = executeDict(resultsGenre1)
            aux = pd.concat([aux, resultsGenre1], ignore_index=True)
@@ -42,8 +42,8 @@ def getArtist2(df,logger):
     aux = pd.DataFrame()
     if artist.empty == False:
         logger.info("Se ha encontrado artista")
-        for i in artist:   
-            resultsArtist1 = getInfoArtist(i)
+        for i in artist.iterrows():   
+            resultsArtist1 = getInfoArtist(i[1]['idValueProperty'],i[1]['valueProperty'])
             resultsArtist1['Level'] = 4
             resultsArtist1 = executeDict(resultsArtist1)
             aux = pd.concat([aux, resultsArtist1], ignore_index=True)
@@ -56,8 +56,8 @@ def getMembers2(df,logger):
     aux = pd.DataFrame()
     if members.empty == False:
         logger.info("Se han encontrado miembros")
-        for i in members:   
-            resultsMembers1 = getInfoMembers(i)
+        for i in members.iterrows():   
+            resultsMembers1 = getInfoMembers(i[1]['idValueProperty'],i[1]['valueProperty'])
             resultsMembers1['Level'] = 5
             resultsMembers1 = executeDict(resultsMembers1)
             aux = pd.concat([aux, resultsMembers1], ignore_index=True)
@@ -70,8 +70,8 @@ def mergeData(df1,df2):
     df3 = pd.merge(df1, df2, on=['idProperty', 'idPropertyName', 'idValueProperty', 'valueProperty'], how='inner')
     return df3
 
-def getInfSong(song):
-    dfSong = getInfoSong(song)
+def getInfSong(songCode,title):
+    dfSong = getInfoSong(songCode,title)
     dfSong = executeDict(dfSong)
     return dfSong
 

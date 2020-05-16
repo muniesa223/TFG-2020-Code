@@ -59,13 +59,13 @@ def main(arg1,arg2,arg3,arg4):
                 raise Exception('Missing second song')
             else:
                 #SONG1
-                songData = getInfSong(song1['item.value'][0])
+                songData = getInfSong(song1['item.value'][0],song1['itemLabel.value'][0])
                 genreData = getGenre2(songData,logger)
                 artistData = getArtist2(songData,logger)
                 membersData = getMembers2(artistData,logger)
 
                 #SONG2
-                songData2 = getInfSong(song2['item.value'][0])
+                songData2 = getInfSong(song2['item.value'][0],song2['itemLabel.value'][0])
                 genreData2 = getGenre2(songData2,logger)
                 artistData2 = getArtist2(songData2,logger)
                 membersData2 = getMembers2(artistData2,logger)
@@ -80,6 +80,7 @@ def main(arg1,arg2,arg3,arg4):
 
                 relationsDF = mergeData(song1Data,song2Data)
                 relationsDF = relationsDF.drop_duplicates()
+                relationsDF.to_csv('relations.csv',index=False)
 
     except Exception as miss:
         logger.info(miss)
